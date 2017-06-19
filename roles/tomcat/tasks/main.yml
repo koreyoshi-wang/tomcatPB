@@ -1,0 +1,33 @@
+---
+- name: Copy Java
+  copy: src=/tmp/jdk-8u131-linux-x64.tar.gz dest=/root/
+  
+- name: Extract Java
+  shell: chdir=/root/ tar zxvf jdk-8u131-linux-x64.tar.gz
+  
+- name: Download Tomcat
+  get_url: url=http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.61/bin/apache-tomcat-7.0.61.tar.gz dest=/root/apache-tomcat-7.0.61.tar.gz
+  
+- name: Extract Tomcat
+  shell: chdir=/root/ tar zxvf apache-tomcat-7.0.61.tar.gz
+  
+- name: Configure Tomcat server
+  template: src=server.xml dest=/root/apache-tomcat-7.0.61/conf/
+  notify: restart tomcat
+  
+- name: Copy Tomcat Script
+  copy: src=tomcat-initscript.sh dest=/etc/init.d/tomcat mode=0755
+  
+- name: Start Tomcat
+  service: name=tomcat state=started enabled=yes
+  
+- name: Deploy project to tomcat
+  copy: src=/var/lib/jenkins/workspace/DevOps/target/demo.war dest=/root/apache-tomcat-7.0.61/webapps/
+  
+- name: Delete old project
+  shell: chdir=/root/apache-tomcat-7.0.61/webapps/ rm -rf demo
+  notify: restart tomcat
+  
+- name: wait for tomcat to start
+  wait_for: port={{http_port}}
+  #wait_for: port=8080
