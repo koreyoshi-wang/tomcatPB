@@ -1,14 +1,14 @@
 ---
 # If a new Server added, please uncomment the follwing code
-#- name: Copy Java
-#  copy: src=/tmp/jdk-8u131-linux-x64.tar.gz dest=/root/
+- name: Copy Java
+  copy: src=/tmp/jdk-8u131-linux-x64.tar.gz dest=/root/
   
 - name: Extract Java
   shell: chdir=/root/ tar zxvf jdk-8u131-linux-x64.tar.gz
 
 # If a new Server added, please uncomment the follwing code
-#- name: Download Tomcat
-#  get_url: url=http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.61/bin/apache-tomcat-7.0.61.tar.gz dest=/root/apache-tomcat-7.0.61.tar.gz
+- name: Download Tomcat
+  get_url: url=http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.61/bin/apache-tomcat-7.0.61.tar.gz dest=/root/apache-tomcat-7.0.61.tar.gz
   
 - name: Extract Tomcat
   shell: chdir=/root/ tar zxvf apache-tomcat-7.0.61.tar.gz
