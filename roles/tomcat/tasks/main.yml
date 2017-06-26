@@ -1,17 +1,29 @@
 ---
-# If a new Server added, please uncomment the follwing code
+- name: Try To Extract Java
+  shell: chdir=/root/ tar zxvf jdk-8u131-linux-x64.tar.gz
+  register: result
+  ignore_errors: True
+  
 - name: Copy Java
   copy: src=/tmp/jdk-8u131-linux-x64.tar.gz dest=/root/
+  when: result|failed
   
 - name: Extract Java
   shell: chdir=/root/ tar zxvf jdk-8u131-linux-x64.tar.gz
-
-# If a new Server added, please uncomment the follwing code
+  when: result|failed
+  
+- name: Try To Extract Tomcat
+  shell: chdir=/root/ tar zxvf apache-tomcat-7.0.61.tar.gz
+  register: result
+  ignore_errors: True
+  
 - name: Download Tomcat
   get_url: url=http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.61/bin/apache-tomcat-7.0.61.tar.gz dest=/root/apache-tomcat-7.0.61.tar.gz
+  when: result|failed
   
 - name: Extract Tomcat
   shell: chdir=/root/ tar zxvf apache-tomcat-7.0.61.tar.gz
+  when: result|failed
   
 - name: Configure Tomcat server
   template: src=server.xml dest=/root/apache-tomcat-7.0.61/conf/
@@ -20,8 +32,14 @@
 - name: Copy Tomcat Script
   copy: src=tomcat-initscript.sh dest=/etc/init.d/tomcat mode=0755
   
-- name: Start Tomcat
+- name: Try To Start Tomcat
   service: name=tomcat state=started enabled=yes
+  register: result
+  ignore_errors: True
+  
+- name: Try To Start Tomcat Again
+  service: name=tomcat state=started enabled=yes
+  when: result|failed
   
 - name: Deploy project to tomcat
   copy: src=/var/lib/jenkins/workspace/DevOps/target/demo.war dest=/root/apache-tomcat-7.0.61/webapps/
