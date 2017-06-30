@@ -1,3 +1,5 @@
 [tomcat-server]
+#Tomcat Server 1
 13.90.205.132
-13.92.246.106
+#Tomcat Server 2
+#13.92.246.106
